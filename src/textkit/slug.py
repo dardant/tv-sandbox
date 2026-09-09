@@ -3,9 +3,9 @@
 import re
 import unicodedata
 
-#: Every character a slug may not contain. Replaced one for one, which is why runs of punctuation currently
-#: survive as runs of hyphens.
-_NOT_ALLOWED = re.compile(r"[^a-z0-9]")
+#: One or more consecutive characters a slug may not contain. Matched as a single run so that re.sub
+#: replaces the entire sequence with one hyphen, collapsing repeated separators.
+_NOT_ALLOWED = re.compile(r"[^a-z0-9]+")
 
 
 def slugify(text: str) -> str:
@@ -14,4 +14,4 @@ def slugify(text: str) -> str:
     Accents are folded to their ASCII base letter, so "Cafe\u0301" and "Cafe" produce the same slug.
     """
     folded = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
-    return _NOT_ALLOWED.sub("-", folded.lower())
+    return _NOT_ALLOWED.sub("-", folded.lower()).strip("-")
