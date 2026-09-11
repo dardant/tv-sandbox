@@ -1,0 +1,6 @@
+[project]
+name = "textkit"
+version = "0.3.0"
+description = "A very small text toolkit (TandemVelocity sandbox)."
+requires-python = ">=3.10"
+dependencies = []

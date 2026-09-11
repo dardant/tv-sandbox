@@ -1,17 +1,11 @@
-# Commit this to dardant/tv-sandbox as .github/workflows/ci.yml on the default branch (main).
+# CI for textkit. Committed by the repository administrator, never by TandemVelocity (ADR-0040 D7).
 #
-# It is deliberately NOT created by TandemVelocity. Configuring which pipelines a repository runs is an
-# administrator/bootstrap responsibility: a delivery platform that could write .github/workflows/** would be
-# able to change the very checks its own changes are judged by, which is a separation-of-duties hole no amount
-# of runtime policy closes. TV_GITHUB_TOKEN therefore does not carry the fine-grained "Workflows" permission,
-# and scripts/verify_real_cicd.py reports the honest state ("published, and no pipeline ran") when none exists.
-#
-# What it has to provide for the proof to mean anything (ADR-0040 D3):
-#   - it must run on `push`, so a pushed candidate branch triggers it without a human opening anything;
-#   - GitHub must report the head SHA of that push, which it does as `github.sha` and in the workflow run's
-#     `head_sha` — that is the revision TandemVelocity correlates against;
-#   - it must actually fail when the tests fail, so a red pipeline blocks delivery validation rather than
-#     producing an "unknown" that means nothing.
+# Deliberately stricter than the local `pytest -q` a delivery run executes:
+#   tests      the unit suite on the oldest and newest supported Python;
+#   contract   consumer contract tests in ci/, which run only here (CONTRIBUTING.md, rule 4);
+#   changelog  a branch must add a line to CHANGELOG.md (CONTRIBUTING.md, rule 1).
+# It runs on push, so a pushed candidate branch is tested at the exact revision TandemVelocity published, and
+# GitHub reports that revision as the workflow run's head_sha (ADR-0040 D3).
 name: ci
 
 on:
@@ -19,14 +13,45 @@ on:
   pull_request:
 
 jobs:
-  integration:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pytest
+      - name: Report the revision under test
+        run: echo "testing ${{ github.sha }} on ${{ github.ref }}"
+      - run: pytest -q
+
+  contract:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - run: python -m pip install --upgrade pytest
-      - name: Report the revision under test
-        run: echo "testing ${{ github.sha }} on ${{ github.ref }}"
-      - run: pytest -q
+      - run: pytest -q ci
+
+  changelog:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: CHANGELOG.md records the change
+        run: |
+          git fetch --quiet origin main
+          changed="$(git diff --name-only origin/main...HEAD)"
+          printf '%s\n' "$changed"
+          if ! printf '%s\n' "$changed" | grep -qx 'CHANGELOG.md'; then
+            echo "::error file=CHANGELOG.md::Add a line under '## Unreleased' in CHANGELOG.md (CONTRIBUTING.md, rule 1)."
+            exit 1
+          fi

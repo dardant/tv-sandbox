@@ -1,0 +1,6 @@
+collapse_whitespace
+fold_accents
+slugify
+snake_case
+title_case
+truncate
