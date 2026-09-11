@@ -4,6 +4,9 @@ Every change adds a line under **Unreleased** (CONTRIBUTING.md, rule 1). CI refu
 
 ## Unreleased
 
+### Added
+- `kebab_case` function for hyphen-separated identifiers.
+
 ## 0.3.0 - 2026-09-11
 
 ### Added

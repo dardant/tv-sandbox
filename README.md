@@ -13,6 +13,7 @@ requests. Delete it whenever it stops being useful.
 | `truncate(text, width)` | text shortened to `width`, the cut marked with `...` |
 | `title_case(text)` | each word capitalized |
 | `snake_case(text)` | an identifier in snake case |
+| `kebab_case(text)` | a lowercase, hyphen-separated identifier |
 | `collapse_whitespace(text)` | runs of whitespace collapsed, ends trimmed |
 | `fold_accents(text)` | accented letters folded to ASCII |
 
