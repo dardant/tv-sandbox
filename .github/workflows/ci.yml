@@ -1,0 +1,32 @@
+# Commit this to dardant/tv-sandbox as .github/workflows/ci.yml on the default branch (main).
+#
+# It is deliberately NOT created by TandemVelocity. Configuring which pipelines a repository runs is an
+# administrator/bootstrap responsibility: a delivery platform that could write .github/workflows/** would be
+# able to change the very checks its own changes are judged by, which is a separation-of-duties hole no amount
+# of runtime policy closes. TV_GITHUB_TOKEN therefore does not carry the fine-grained "Workflows" permission,
+# and scripts/verify_real_cicd.py reports the honest state ("published, and no pipeline ran") when none exists.
+#
+# What it has to provide for the proof to mean anything (ADR-0040 D3):
+#   - it must run on `push`, so a pushed candidate branch triggers it without a human opening anything;
+#   - GitHub must report the head SHA of that push, which it does as `github.sha` and in the workflow run's
+#     `head_sha` — that is the revision TandemVelocity correlates against;
+#   - it must actually fail when the tests fail, so a red pipeline blocks delivery validation rather than
+#     producing an "unknown" that means nothing.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pytest
+      - name: Report the revision under test
+        run: echo "testing ${{ github.sha }} on ${{ github.ref }}"
+      - run: pytest -q
