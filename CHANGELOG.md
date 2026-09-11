@@ -4,6 +4,9 @@ Every change adds a line under **Unreleased** (CONTRIBUTING.md, rule 1). CI refu
 
 ## Unreleased
 
+### Changed
+- `slugify` now accepts an optional `max_length` keyword argument to cap slug length at a word boundary.
+
 ## 0.3.0 - 2026-09-11
 
 ### Added
