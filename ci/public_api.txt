@@ -1,5 +1,6 @@
 collapse_whitespace
 fold_accents
+kebab_case
 slugify
 snake_case
 title_case
