@@ -9,7 +9,7 @@ requests. Delete it whenever it stops being useful.
 
 | Function | Does |
 |---|---|
-| `slugify(text)` | a lowercase, hyphen-separated URL slug |
+| `slugify(text, *, max_length=None)` | a lowercase, hyphen-separated URL slug, optionally capped to `max_length` characters |
 | `truncate(text, width)` | text shortened to `width`, the cut marked with `...` |
 | `title_case(text)` | each word capitalized |
 | `snake_case(text)` | an identifier in snake case |
@@ -20,6 +20,8 @@ requests. Delete it whenever it stops being useful.
 >>> from textkit import slugify
 >>> slugify("Hello World")
 'hello-world'
+>>> slugify("Designing resilient systems for real people", max_length=20)
+'designing-resilient'
 ```
 
 Run the unit tests with `pytest -q`. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request: CI
