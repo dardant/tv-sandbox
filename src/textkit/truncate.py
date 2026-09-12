@@ -20,11 +20,11 @@ def truncate(text: str, width: int, *, ellipsis: str = ELLIPSIS) -> str:
     if len(text) <= width:
         return text
 
-    room = width - len(ellipsis)
-
-    # Width too small to fit any ellipsis — hard-cut without marker.
-    if room < 1:
+    # Width too small to fit the ellipsis — hard-cut without marker.
+    if width <= len(ellipsis):
         return text[:width]
+
+    room = width - len(ellipsis)
 
     candidate = text[:room]
 

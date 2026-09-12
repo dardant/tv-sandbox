@@ -86,6 +86,59 @@ def test_width_of_one():
     assert len(truncate("hello", 1)) == 1
 
 
+def test_scrum18_small_width_no_ellipsis():
+    """SCRUM-18: width <= len(ellipsis) returns first width chars, no ellipsis."""
+    assert truncate("hello world", 2) == "he"
+    assert truncate("hello world", 3) == "hel"
+    assert truncate("hello world", 1) == "h"
+    for width in (1, 2, 3):
+        result = truncate("hello world", width)
+        assert len(result) == width
+        assert "..." not in result
+    assert truncate("hello world", 2, ellipsis="..") == "he"
+
+
+def test_scrum18_tiny_width_custom_ellipsis_lengths():
+    """SCRUM-18: tiny-width guard respects the custom ellipsis length."""
+    # Single-character ellipsis: width 1 leaves no room -> hard-cut.
+    assert truncate("hello world", 1, ellipsis="…") == "h"
+    assert "…" not in truncate("hello world", 1, ellipsis="…")
+    # Width just above a single-character ellipsis fits marker + 1 char.
+    result = truncate("hello world", 2, ellipsis="…")
+    assert result == "h…"
+    assert len(result) <= 2
+    # Longer ellipsis ("....", len 4): widths 1..4 hard-cut without marker.
+    for width in (1, 2, 3, 4):
+        result = truncate("hello world", width, ellipsis="....")
+        assert result == "hello world"[:width]
+        assert "...." not in result
+        assert len(result) <= width
+    # Width just above the longer ellipsis keeps the marker within budget.
+    result = truncate("hello world", 5, ellipsis="....")
+    assert result.endswith("....")
+    assert len(result) <= 5
+    # Width smaller than a custom ellipsis hard-cuts without marker.
+    assert truncate("hello world", 2, ellipsis="....") == "he"
+    assert truncate("hello world", 2, ellipsis="..") == "he"
+
+
+def test_scrum18_short_text_fits_tiny_width_unchanged():
+    """SCRUM-18: text that already fits is returned unchanged, no ellipsis."""
+    assert truncate("hi", 2) == "hi"
+    assert truncate("a", 1) == "a"
+    assert truncate("hi", 3) == "hi"
+    assert truncate("ab", 3, ellipsis="....") == "ab"
+
+
+def test_scrum18_normal_widths_still_use_ellipsis():
+    """SCRUM-18: every other case behaves as today (ellipsis within width)."""
+    assert truncate("hello world", 4) == "h..."
+    assert truncate("hello world", 8) == "hello..."
+    for width in (4, 5, 8, 11):
+        result = truncate("hello world", width)
+        assert len(result) <= width
+
+
 def test_multiple_spaces_between_words():
     """Multiple spaces between words should still find a word boundary."""
     result = truncate("hello    world", 10)

@@ -7,6 +7,7 @@ Every change adds a line under **Unreleased** (CONTRIBUTING.md, rule 1). CI refu
 ### Fixed
 - `slugify` now collapses consecutive disallowed characters into a single hyphen and strips leading/trailing hyphens.
 - `truncate` now respects the `width` budget (result including ellipsis is never longer than `width`) and cuts at word boundaries instead of mid-word.
+- `truncate` with a width less than or equal to the ellipsis length returns the first `width` characters without an ellipsis (e.g. `truncate("hello world", 2)` returns `"he"`).
 
 ## 0.3.0 - 2026-09-11
 
