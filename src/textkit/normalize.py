@@ -5,12 +5,12 @@ from __future__ import annotations
 import re
 import unicodedata
 
-_SPACES = re.compile(r" +")
+_SPACES = re.compile(r"\s+")
 
 
 def collapse_whitespace(text: str) -> str:
-    """Runs of spaces collapsed to one, with both ends trimmed."""
-    return _SPACES.sub(" ", text).strip(" ")
+    """Runs of whitespace collapsed to one, with both ends trimmed."""
+    return _SPACES.sub(" ", text).strip()
 
 
 def fold_accents(text: str) -> str:
