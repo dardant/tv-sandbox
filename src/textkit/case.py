@@ -9,9 +9,19 @@ _WORD = re.compile(r"[A-Za-z0-9]+")
 _CAMEL_SEAM = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 
 
+def _title_word(word: str) -> str:
+    if len(word) == 1:
+        return word.capitalize()
+    if word.isupper():
+        return word
+    if word.islower():
+        return word.capitalize()
+    return word
+
+
 def title_case(text: str) -> str:
     """Each word capitalized: ``"hello world"`` -> ``"Hello World"``."""
-    return " ".join(word.capitalize() for word in text.split())
+    return " ".join(_title_word(word) for word in text.split())
 
 
 def snake_case(text: str) -> str:
