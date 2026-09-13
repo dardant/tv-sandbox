@@ -15,4 +15,6 @@ def collapse_whitespace(text: str) -> str:
 
 def fold_accents(text: str) -> str:
     """Accented letters replaced by their ASCII base letter: ``"Café"`` -> ``"Cafe"``."""
-    return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    decomposed = unicodedata.normalize("NFKD", text)
+    stripped = "".join(c for c in decomposed if unicodedata.combining(c) == 0 and unicodedata.category(c) != "Mn")
+    return stripped.encode("ascii", "ignore").decode("ascii")

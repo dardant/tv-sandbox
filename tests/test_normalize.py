@@ -1,3 +1,5 @@
+import unicodedata
+
 from textkit import collapse_whitespace, fold_accents
 
 
@@ -42,3 +44,15 @@ def test_collapses_other_ascii_whitespace():
 
 def test_folds_accents():
     assert fold_accents("Café crème") == "Cafe creme"
+
+
+def test_folds_accents_for_composed_and_decomposed_input():
+    composed = unicodedata.normalize("NFC", "café")
+    decomposed = unicodedata.normalize("NFD", "café")
+    assert len(decomposed) == 5
+    for form in (composed, decomposed):
+        result = fold_accents(form)
+        assert result == "cafe"
+        assert len(result) == 4
+        assert all(unicodedata.combining(c) == 0 for c in result)
+        assert all(unicodedata.category(c) != "Mn" for c in result)
