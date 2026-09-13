@@ -7,6 +7,8 @@ import re
 _WORD = re.compile(r"[A-Za-z0-9]+")
 #: A lowercase letter or digit followed by an uppercase letter: the seam in ``orderTotal``.
 _CAMEL_SEAM = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
+#: An uppercase letter followed by an uppercase letter starting a capitalised word: the seam in ``HTTPServer``.
+_ACRONYM_SEAM = re.compile(r"(?<=[A-Z])(?=[A-Z][a-z])")
 
 
 def _title_word(word: str) -> str:
@@ -26,5 +28,5 @@ def title_case(text: str) -> str:
 
 def snake_case(text: str) -> str:
     """An identifier in snake case: ``"orderTotal"`` and ``"Order Total"`` both become ``"order_total"``."""
-    spaced = _CAMEL_SEAM.sub(" ", text)
+    spaced = _ACRONYM_SEAM.sub(" ", _CAMEL_SEAM.sub(" ", text))
     return "_".join(word.lower() for word in _WORD.findall(spaced))

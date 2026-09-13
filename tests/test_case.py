@@ -55,3 +55,31 @@ def test_snake_case_joins_words():
 
 def test_snake_case_keeps_digits_attached_to_their_word():
     assert snake_case("version2Update") == "version2_update"
+
+
+def test_snake_case_splits_leading_acronym():
+    assert snake_case("HTTPServer") == "http_server"
+
+
+def test_snake_case_splits_acronym_in_middle():
+    assert snake_case("parseHTTPResponse") == "parse_http_response"
+
+
+def test_snake_case_splits_leading_acronym_with_trailing_word():
+    assert snake_case("HTTPServerError") == "http_server_error"
+
+
+def test_snake_case_splits_second_middle_acronym():
+    assert snake_case("parseJSONResponse") == "parse_json_response"
+
+
+def test_snake_case_keeps_lone_acronym_intact():
+    assert snake_case("HTTP") == "http"
+
+
+def test_snake_case_keeps_trailing_acronym_separate():
+    assert snake_case("parseHTTP") == "parse_http"
+
+
+def test_snake_case_splits_acronym_between_lowercase_words():
+    assert snake_case("myURLValue") == "my_url_value"
