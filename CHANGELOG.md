@@ -9,6 +9,7 @@ Every change adds a line under **Unreleased** (CONTRIBUTING.md, rule 1). CI refu
 - `truncate` now respects the `width` budget (result including ellipsis is never longer than `width`) and cuts at word boundaries instead of mid-word.
 - `title_case` now preserves all-caps acronyms and mixed-case words instead of lowercasing them.
 - `collapse_whitespace` now collapses all whitespace (tabs, newlines, U+00A0) to a single space and trims ends.
+- `fold_accents` (reported as `strip_accents`) now strips combining marks so decomposed (NFD) input folds to ASCII with no residual marks.
 
 ## 0.3.0 - 2026-09-11
 
