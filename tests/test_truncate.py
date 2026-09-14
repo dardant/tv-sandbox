@@ -200,3 +200,20 @@ def test_ellipsis_marker_is_three_ascii_dots():
     from textkit.truncate import ELLIPSIS
     assert ELLIPSIS == "..."
     assert len(ELLIPSIS) == 3
+
+
+# --- Regression tests for SCRUM-24 ---
+
+
+def test_tab_is_a_word_boundary():
+    """A tab counts as a word boundary, so the cut lands before it."""
+    result = truncate("Designing\tresilient systems", 20)
+    assert result == "Designing..."
+    assert len(result) <= 20
+
+
+def test_non_breaking_space_is_a_word_boundary():
+    """A non-breaking space counts as a word boundary, so the cut lands before it."""
+    result = truncate("Designing resilient systems", 20)
+    assert result == "Designing..."
+    assert len(result) <= 20
