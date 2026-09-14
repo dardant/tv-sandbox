@@ -29,17 +29,20 @@ def truncate(text: str, width: int, *, ellipsis: str = ELLIPSIS) -> str:
     candidate = text[:room]
 
     # Determine the prefix, preferring a word-boundary cut.
-    if room < len(text) and text[room] == " ":
-        # The cut lands right before a space — we are at a word boundary.
+    if room < len(text) and text[room].isspace():
+        # The cut lands right before whitespace — we are at a word boundary.
         prefix = candidate.rstrip()
-    elif candidate.endswith(" "):
-        # The candidate itself ends with space(s) — clean word boundary.
+    elif candidate and candidate[-1].isspace():
+        # The candidate itself ends with whitespace — clean word boundary.
         prefix = candidate.rstrip()
     else:
-        # Try to find the last space so we don't cut mid-word.
-        last_space = candidate.rfind(" ")
-        if last_space > 0:
-            prefix = candidate[:last_space].rstrip()
+        # Try to find the last whitespace so we don't cut mid-word.
+        last_ws = -1
+        for i, ch in enumerate(candidate):
+            if ch.isspace():
+                last_ws = i
+        if last_ws > 0:
+            prefix = candidate[:last_ws].rstrip()
         else:
             # Single word longer than room — hard-cut.
             prefix = candidate
