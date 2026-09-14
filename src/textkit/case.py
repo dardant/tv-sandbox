@@ -10,12 +10,19 @@ _CAMEL_SEAM = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 
 
 def _title_word(word: str) -> str:
-    if len(word) == 1:
-        return word.capitalize()
-    if word.isupper():
+    prefix_end = 0
+    while prefix_end < len(word) and not word[prefix_end].isalnum():
+        prefix_end += 1
+    prefix = word[:prefix_end]
+    rest = word[prefix_end:]
+    if not rest:
         return word
-    if word.islower():
-        return word.capitalize()
+    if len(rest) == 1:
+        return prefix + rest.capitalize()
+    if rest.isupper():
+        return word
+    if rest.islower():
+        return prefix + rest.capitalize()
     return word
 
 

@@ -45,6 +45,36 @@ def test_title_case_leaves_already_titlecased_word_unchanged():
     assert title_case("Launches") == "Launches"
 
 
+def test_title_case_capitalizes_quoted_word():
+    assert title_case('"hello world" said the fox') == '"Hello World" Said The Fox'
+
+
+def test_title_case_capitalizes_bracketed_word():
+    assert title_case("(hello) world") == "(Hello) World"
+
+
+def test_title_case_leaves_empty_string_unchanged():
+    assert title_case("") == ""
+
+
+def test_title_case_leaves_punctuation_only_token_unchanged():
+    assert title_case("...") == "..."
+    assert title_case('"""') == '"""'
+
+
+def test_title_case_capitalizes_quoted_single_letter_word():
+    assert title_case('"a" test') == '"A" Test'
+
+
+def test_title_case_preserves_quoted_acronym():
+    assert title_case('"NASA launches') == '"NASA Launches'
+
+
+def test_title_case_preserves_mixed_case_after_leading_punctuation():
+    assert title_case('"iPhone" case') == '"iPhone" Case'
+    assert title_case("(NASA) launches") == "(NASA) Launches"
+
+
 def test_snake_case_splits_camel_case():
     assert snake_case("orderTotal") == "order_total"
 
