@@ -200,3 +200,17 @@ def test_ellipsis_marker_is_three_ascii_dots():
     from textkit.truncate import ELLIPSIS
     assert ELLIPSIS == "..."
     assert len(ELLIPSIS) == 3
+
+
+def test_tab_is_word_boundary_for_truncate():
+    """A tab counts as a word boundary (SCRUM-24)."""
+    result = truncate("Designing\tresilient systems", 20)
+    assert result == "Designing..."
+    assert len(result) <= 20
+
+
+def test_nbsp_is_word_boundary_for_truncate():
+    """A non-breaking space counts as a word boundary (SCRUM-24)."""
+    result = truncate("Designing resilient systems", 20)
+    assert result == "Designing..."
+    assert len(result) <= 20
