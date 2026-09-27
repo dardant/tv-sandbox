@@ -200,3 +200,64 @@ def test_ellipsis_marker_is_three_ascii_dots():
     from textkit.truncate import ELLIPSIS
     assert ELLIPSIS == "..."
     assert len(ELLIPSIS) == 3
+
+
+# --- Regression tests for SCRUM-24 ---
+
+
+def test_tab_is_word_boundary():
+    """A tab counts as a word boundary, so the cut lands before it."""
+    result = truncate("Designing\tresilient systems", 20)
+    assert result == "Designing..."
+    assert len(result) <= 20
+
+
+def test_non_breaking_space_is_word_boundary():
+    """A non-breaking space counts as a word boundary, so the cut lands before it."""
+    result = truncate("Designing resilient systems", 20)
+    assert result == "Designing..."
+    assert len(result) <= 20
+
+
+# --- Additional whitespace-boundary tests (test agent, SCRUM-24) ---
+
+
+# (uses top-level pytest import)
+
+
+@pytest.mark.parametrize('sep', [' ', '\t', '\n', '\r', '\xa0'])
+def test_any_whitespace_is_word_boundary_and_fits_width(sep):
+    text = 'Designing' + sep + 'resilient systems'
+    result = truncate(text, 20)
+    assert result == 'Designing...'
+    assert len(result) <= 20
+
+
+def test_newline_is_word_boundary():
+    result = truncate('Designing\nresilient systems', 20)
+    assert result == 'Designing...'
+    assert len(result) <= 20
+
+
+def test_carriage_return_is_word_boundary():
+    result = truncate('Designing\rresilient systems', 20)
+    assert result == 'Designing...'
+    assert len(result) <= 20
+
+
+def test_tab_right_after_room_is_word_boundary():
+    result = truncate('The quick\tbrown fox', 12)
+    assert result == 'The quick...'
+    assert len(result) <= 12
+
+
+def test_newline_right_after_room_is_word_boundary():
+    result = truncate('The quick\nbrown fox', 12)
+    assert result == 'The quick...'
+    assert len(result) <= 12
+
+
+def test_candidate_ending_with_tab_strips_before_ellipsis():
+    result = truncate('hello\t world foo', 9)
+    assert result == 'hello...'
+    assert len(result) <= 9
